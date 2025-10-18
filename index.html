@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AamVerse – Fresh Mangoes & More</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #fffbea;
+    }
+    
+    .card {
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .cart-item {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .pulse {
+      animation: pulse 0.5s ease-in-out;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-yellow-50 font-sans">
+
+  <!-- Header -->
+  <header class="bg-yellow-500 text-white py-4 shadow-lg sticky top-0 z-10">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <div class="flex items-center">
+        <h1 class="text-3xl font-bold">🍋 AamVerse</h1>
+        <p class="ml-4 text-sm hidden md:block">Fresh Mangoes, Guava, Hair Oil & More – Straight from Farmers</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <!-- Search Bar -->
+        <div class="relative">
+          <input type="text" id="searchInput" placeholder="Search products..." class="py-2 px-4 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-300 w-40 md:w-64">
+          <i class="fas fa-search absolute right-3 top-3 text-gray-500"></i>
+        </div>
+        
+        <!-- Cart Icon with Badge -->
+        <div class="relative">
+          <button id="cartButton" class="bg-yellow-600 hover:bg-yellow-700 p-2 rounded-full transition-colors">
+            <i class="fas fa-shopping-cart text-white"></i>
+            <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden flex flex-col">
+        <div class="p-6 border-b flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-gray-800">Your Cart</h2>
+          <button id="closeCart" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div id="cartItems" class="p-4 overflow-y-auto flex-grow">
+          <!-- Cart items will be dynamically added here -->
+          <p id="emptyCartMessage" class="text-center text-gray-500 py-8">Your cart is empty</p>
+        </div>
+        <div class="p-4 border-t">
+          <div class="flex justify-between mb-4">
+            <span class="font-semibold">Total:</span>
+            <span id="cartTotal" class="font-bold">₹0</span>
+          </div>
+          <button id="checkoutButton" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition-colors">Checkout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Search and Filter Section -->
+    <div class="mb-8 bg-white p-4 rounded-xl shadow-md">
+      <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div class="flex space-x-4">
+          <button class="filter-btn active bg-yellow-500 text-white px-4 py-2 rounded-lg transition-colors" data-filter="all">All Products</button>
+          <button class="filter-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition-colors" data-filter="mango">Mangoes</button>
+          <button class="filter-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition-colors" data-filter="fruit">Fruits</button>
+          <button class="filter-btn bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg transition-colors" data-filter="oil">Oils</button>
+        </div>
+        <div class="text-sm text-gray-600">
+          <span id="productCount">6</span> products available
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <section id="productsContainer" class="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+      <!-- Product cards will be dynamically generated -->
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-yellow-500 text-center text-white py-6 mt-12">
+    <div class="container mx-auto px-4">
+      <p class="mb-2">© 2025 AamVerse | Made with 💛 by Deeksha</p>
+      <div class="flex justify-center space-x-4 text-sm">
+        <a href="#" class="hover:text-yellow-200 transition-colors">Privacy Policy</a>
+        <a href="#" class="hover:text-yellow-200 transition-colors">Terms of Service</a>
+        <a href="#" class="hover:text-yellow-200 transition-colors">Contact Us</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Product data with PERFECTLY MATCHING images
+    const products = [
+      {
+        id: 1,
+        name: "Alphonso Mango",
+        description: "Sweet, juicy, and perfect for summer delight.",
+        price: 120,
+        stock: 25,
+        image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&h=300&fit=crop",
+        category: "mango"
+      },
+      {
+        id: 2,
+        name: "Farm Fresh Guava",
+        description: "Crisp and full of Vitamin C goodness.",
+        price: 80,
+        stock: 30,
+        image: "https://images.unsplash.com/photo-1590487988256-9ed24133863e?w=400&h=300&fit=crop",
+        category: "fruit"
+      },
+      {
+        id: 3,
+        name: "Organic Hair Oil",
+        description: "Made with mango seed extract and coconut essence.",
+        price: 250,
+        stock: 18,
+        image: "https://images.unsplash.com/photo-1604323192736-44c7d444036b?w=400&h=300&fit=crop",
+        category: "oil"
+      },
+      {
+        id: 4,
+        name: "Kesar Mango",
+        description: "Rich saffron-colored pulp with exquisite taste.",
+        price: 150,
+        stock: 20,
+        image: "https://images.unsplash.com/photo-1590502545357-5d35bf0ce8c1?w=400&h=300&fit=crop",
+        category: "mango"
+      },
+      {
+        id: 5,
+        name: "Coconut Oil",
+        description: "Pure cold-pressed coconut oil for hair and skin.",
+        price: 180,
+        stock: 15,
+        image: "https://images.unsplash.com/photo-1604323192736-44c7d444036b?w=400&h=300&fit=crop",
+        category: "oil"
+      },
+      {
+        id: 6,
+        name: "Dasheri Mango",
+        description: "Fragrant and sweet with a unique flavor.",
+        price: 100,
+        stock: 22,
+        image: "https://images.unsplash.com/photo-1590502545457-62ba3cb357e5?w=400&h=300&fit=crop",
+        category: "mango"
+      }
+    ];
+
+    // Cart data
+    let cart = [];
+    let filteredProducts = [...products];
+
+    // DOM elements
+    const productsContainer = document.getElementById('productsContainer');
+    const cartButton = document.getElementById('cartButton');
+    const cartModal = document.getElementById('cartModal');
+    const closeCart = document.getElementById('closeCart');
+    const cartItems = document.getElementById('cartItems');
+    const cartCount = document.getElementById('cartCount');
+    const cartTotal = document.getElementById('cartTotal');
+    const checkoutButton = document.getElementById('checkoutButton');
+    const searchInput = document.getElementById('searchInput');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const productCount = document.getElementById('productCount');
+    const emptyCartMessage = document.getElementById('emptyCartMessage');
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      updateCartCount();
+      
+      // Event listeners
+      cartButton.addEventListener('click', openCart);
+      closeCart.addEventListener('click', closeCartModal);
+      checkoutButton.addEventListener('click', checkout);
+      searchInput.addEventListener('input', handleSearch);
+      
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons
+          filterButtons.forEach(btn => {
+            btn.classList.remove('active', 'bg-yellow-500', 'text-white');
+            btn.classList.add('bg-gray-200', 'hover:bg-gray-300');
+          });
+          
+          // Add active class to clicked button
+          button.classList.add('active', 'bg-yellow-500', 'text-white');
+          button.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+          
+          // Filter products
+          const filter = button.getAttribute('data-filter');
+          filterProducts(filter);
+        });
+      });
+    });
+
+    // Render products
+    function renderProducts() {
+      productsContainer.innerHTML = '';
+      
+      if (filteredProducts.length === 0) {
+        productsContainer.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <i class="fas fa-search text-5xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-600">No products found</h3>
+            <p class="text-gray-500 mt-2">Try adjusting your search or filter</p>
+          </div>
+        `;
+        return;
+      }
+      
+      filteredProducts.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'card bg-white p-4 rounded-2xl shadow-lg fade-in';
+        productCard.setAttribute('data-category', product.category);
+        
+        productCard.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" class="rounded-lg w-full h-48 object-cover mb-4">
+          <h2 class="text-2xl font-semibold">${product.name}</h2>
+          <p class="text-gray-700 my-2">${product.description}</p>
+          <div class="flex justify-between items-center mt-4">
+            <div>
+              <p class="text-green-600 font-bold">Stock: <span id="stock${product.id}">${product.stock}</span></p>
+              <p class="text-lg font-bold text-yellow-600">₹${product.price}</p>
+            </div>
+            <button onclick="addToCart(${product.id})" class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg text-white transition-colors">
+              <i class="fas fa-cart-plus mr-2"></i>Add to Cart
+            </button>
+          </div>
+        `;
+        
+        productsContainer.appendChild(productCard);
+      });
+      
+      productCount.textContent = filteredProducts.length;
+    }
+
+    // Add to cart function
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      
+      if (!product) return;
+      
+      // Check if product is already in cart
+      const existingItem = cart.find(item => item.id === productId);
+      
+      if (existingItem) {
+        if (existingItem.quantity < product.stock) {
+          existingItem.quantity++;
+        } else {
+          alert(`Sorry, only ${product.stock} ${product.name} available in stock.`);
+          return;
+        }
+      } else {
+        if (product.stock > 0) {
+          cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            quantity: 1,
+            image: product.image
+          });
+        } else {
+          alert(`Sorry, ${product.name} is out of stock.`);
+          return;
+        }
+      }
+      
+      // Update UI
+      updateCartCount();
+      renderCartItems();
+      
+      // Show success message
+      const button = event.target.closest('button');
+      button.classList.add('pulse');
+      setTimeout(() => {
+        button.classList.remove('pulse');
+      }, 500);
+    }
+
+    // Update cart count
+    function updateCartCount() {
+      const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+      cartCount.textContent = totalItems;
+    }
+
+    // Open cart modal
+    function openCart() {
+      cartModal.classList.remove('hidden');
+      renderCartItems();
+    }
+
+    // Close cart modal
+    function closeCartModal() {
+      cartModal.classList.add('hidden');
+    }
+
+    // Render cart items
+    function renderCartItems() {
+      cartItems.innerHTML = '';
+      
+      if (cart.length === 0) {
+        emptyCartMessage.classList.remove('hidden');
+        cartTotal.textContent = '₹0';
+        return;
+      }
+      
+      emptyCartMessage.classList.add('hidden');
+      
+      let total = 0;
+      
+      cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item bg-gray-50 p-4 rounded-lg mb-3 flex items-center';
+        
+        cartItem.innerHTML = `
+          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg mr-4">
+          <div class="flex-grow">
+            <h3 class="font-semibold">${item.name}</h3>
+            <p class="text-gray-600">₹${item.price} x ${item.quantity}</p>
+          </div>
+          <div class="flex items-center">
+            <button onclick="updateQuantity(${item.id}, -1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="fas fa-minus text-sm"></i>
+            </button>
+            <span class="mx-2 font-semibold">${item.quantity}</span>
+            <button onclick="updateQuantity(${item.id}, 1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">
+              <i class="fas fa-plus text-sm"></i>
+            </button>
+            <button onclick="removeFromCart(${item.id})" class="ml-3 text-red-500 hover:text-red-700">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+        
+        cartItems.appendChild(cartItem);
+      });
+      
+      cartTotal.textContent = `₹${total}`;
+    }
+
+    // Update item quantity in cart
+    function updateQuantity(productId, change) {
+      const item = cart.find(item => item.id === productId);
+      const product = products.find(p => p.id === productId);
+      
+      if (!item || !product) return;
+      
+      const newQuantity = item.quantity + change;
+      
+      if (newQuantity < 1) {
+        removeFromCart(productId);
+        return;
+      }
+      
+      if (newQuantity > product.stock) {
+        alert(`Sorry, only ${product.stock} ${product.name} available in stock.`);
+        return;
+      }
+      
+      item.quantity = newQuantity;
+      updateCartCount();
+      renderCartItems();
+    }
+
+    // Remove item from cart
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      updateCartCount();
+      renderCartItems();
+    }
+
+    // Checkout function
+    function checkout() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+      
+      // In a real app, this would process payment
+      alert('Thank you for your order! Your items will be delivered soon.');
+      
+      // Clear cart
+      cart = [];
+      updateCartCount();
+      renderCartItems();
+      closeCartModal();
+    }
+
+    // Handle search
+    function handleSearch() {
+      const searchTerm = searchInput.value.toLowerCase();
+      
+      if (searchTerm === '') {
+        filteredProducts = [...products];
+      } else {
+        filteredProducts = products.filter(product => 
+          product.name.toLowerCase().includes(searchTerm) || 
+          product.description.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      renderProducts();
+    }
+
+    // Filter products by category
+    function filterProducts(category) {
+      if (category === 'all') {
+        filteredProducts = [...products];
+      } else {
+        filteredProducts = products.filter(product => product.category === category);
+      }
+      
+      renderProducts();
+    }
+
+    // Close cart when clicking outside
+    cartModal.addEventListener('click', (e) => {
+      if (e.target === cartModal) {
+        closeCartModal();
+      }
+    });
+  </script>
+</body>
+</html>
